@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  title: Education Management System API
+  version: 0.1.0
+  description: Fundamental API contract for class capacities, teacher assignments, grade management, and automated pass/fail report card generation.
+
+# All endpoints require a JWT Bearer token unless they override this (e.g. /auth/login).
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      operationId: loginUser
+      summary: Log in with username and password (US-01)
+      description: Authenticates a user against the local database and returns a role-based JWT access token.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          description: Invalid username or password
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                title: Unauthorized
+                status: 401
+                code: INVALID_CREDENTIALS
+                detail: Username or password is incorrect.
+
+  /classes:
+    get:
+      operationId: listClasses
+      responses:
+        '200':
+          description: Available classes and capacity information
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/ClassRoom'
+                  
+  /students/{studentId}/grades:
+    post:
+      operationId: addGrade
+      parameters:
+        - in: path
+          name: studentId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewGrade'
+      responses:
+        '201':
+          description: Grade successfully added
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          description: Unauthorized teacher for this class
+          
+  /students/{studentId}/report-card:
+    get:
+      operationId: getReportCard
+      parameters:
+        - in: path
+          name: studentId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Weighted grade calculation and report card status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportCard'
+        '404':
+          description: Student not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token returned by POST /auth/login. The token carries the user's role (MANAGER, TEACHER, STUDENT).
+
+  schemas:
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string, example: "teacher_ahmet" }
+        password: { type: string, format: password }
+        
+    AuthToken:
+      type: object
+      required: [token, role]
+      properties:
+        token: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+        tokenType: { type: string, enum: [Bearer], example: "Bearer" }
+        expiresIn: { type: integer, description: "Token lifetime in seconds", example: 3600 }
+        role: { type: string, enum: [MANAGER, TEACHER, STUDENT] }
+        
+    ClassRoom:
+      type: object
+      required: [id, name, capacity, enrolled]
+      properties:
+        id: { type: string, example: "CLS-101" }
+        name: { type: string, example: "Mathematics Group 1" }
+        capacity: { type: integer, example: 20 }
+        enrolled: { type: integer, example: 15 }
+        
+    NewGrade:
+      type: object
+      required: [examType, score, weight]
+      properties:
+        examType: 
+          type: string
+          enum: [MIDTERM, FINAL, MAKEUP]
+        score: 
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 85
+        weight: 
+          type: integer
+          description: "Percentage weight of the grade on the overall average (e.g., 40)"
+          example: 40
+          
+    ReportCard:
+      type: object
+      required: [studentId, finalAverage, isPassed]
+      properties:
+        studentId: { type: string, example: "STU-9942" }
+        finalAverage: { type: number, format: float, example: 65.5 }
+        isPassed: { type: boolean, example: true }
+        
+    Problem:
+      type: object
+      required: [title, status, code]
+      properties:
+        title: { type: string }
+        status: { type: integer }
+        code: { type: string, example: "INVALID_GRADE_VALUE" }
+        detail: { type: string }
+        
+  responses:
+    BadRequest:
+      description: Invalid request (e.g., Grade out of range)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
