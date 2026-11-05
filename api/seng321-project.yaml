@@ -3,10 +3,18 @@ info:
   title: Education Management System API
   version: 0.1.0
   description: Fundamental API contract for class capacities, teacher assignments, grade management, and automated pass/fail report card generation.
+
+# All endpoints require a JWT Bearer token unless they override this (e.g. /auth/login).
+security:
+  - bearerAuth: []
+
 paths:
   /auth/login:
     post:
       operationId: loginUser
+      summary: Log in with username and password (US-01)
+      description: Authenticates a user against the local database and returns a role-based JWT access token.
+      security: []
       requestBody:
         required: true
         content:
@@ -20,9 +28,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthToken'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           description: Invalid username or password
-          
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                title: Unauthorized
+                status: 401
+                code: INVALID_CREDENTIALS
+                detail: Username or password is incorrect.
+
   /classes:
     get:
       operationId: listClasses
@@ -79,6 +98,13 @@ paths:
           description: Student not found
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token returned by POST /auth/login. The token carries the user's role (MANAGER, TEACHER, STUDENT).
+
   schemas:
     LoginRequest:
       type: object
@@ -91,7 +117,9 @@ components:
       type: object
       required: [token, role]
       properties:
-        token: { type: string }
+        token: { type: string, example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+        tokenType: { type: string, enum: [Bearer], example: "Bearer" }
+        expiresIn: { type: integer, description: "Token lifetime in seconds", example: 3600 }
         role: { type: string, enum: [MANAGER, TEACHER, STUDENT] }
         
     ClassRoom:
