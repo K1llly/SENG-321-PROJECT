@@ -9,7 +9,7 @@
 
 ## 1. System Overview & Architectural Style
 
-The **Education Management System (EMS)** is a web-based academic management platform serving three distinct user roles: **Administrator**, **Teacher**, and **Student**. The system covers local authentication and role-based access control (RBAC), institution setup presets, classroom and capacity management, teacher availability and hybrid scheduling, daily attendance tracking, mock exam templates, flexible exam weighting, and automated report card generation. Out-of-scope domains (accounting/billing, SMS notifications, and live online video classes) are intentionally excluded.
+The **Education Management System (EMS)** is a web-based academic management platform serving three distinct user roles: **Manager**, **Teacher**, and **Student**. The system covers local authentication and role-based access control (RBAC), institution setup presets, classroom and capacity management, teacher availability and hybrid scheduling, daily attendance tracking, mock exam templates, flexible exam weighting, and automated report card generation. Out-of-scope domains (accounting/billing, SMS notifications, and live online video classes) are intentionally excluded.
 
 ### Architectural Style
 The system adopts a **Modular Monolith** organized as a **Layered Architecture (Controller → Service → Repository/ORM)** with an **API-First REST** design:
@@ -54,7 +54,7 @@ Decomposes the Backend API container into middleware, domain services, and the P
 | Component | Responsibility |
 | :--- | :--- |
 | **Auth & RBAC Middleware** | Validates incoming `Bearer` JWT signatures, extracts user identity/role, and blocks unauthorized access (`HTTP 401` / `HTTP 403`). |
-| **Auth & User Service** | Handles local login, `bcrypt` password verification/hashing, and Administrator user management. |
+| **Auth & User Service** | Handles username-based local login, `bcrypt` password verification/hashing, and Manager user management. |
 | **InstitutionPresetService** | Powers the Setup Wizard by storing and applying institution-level academic defaults (institution type, academic term, passing score). |
 | **Classroom & Enrollment Service** | Manages classroom definitions, teacher assignments, and concurrency-safe student enrollments with transactional capacity checks. |
 | **SchedulingService** | Coordinates teacher availability declarations and hybrid schedule slot generation with manual override support. |
@@ -75,13 +75,13 @@ Summarizes role-based system capabilities, mandatory authentication dependencies
 ### 4.2 UML Class Diagram (Domain & Data Model)
 Represents the relational domain entities mapped to Prisma models and PostgreSQL tables, including the core academic entities and the extended modules (`InstitutionPreset`, `TeacherAvailability`, `ScheduleSlot`, and `MockExamTemplate`).
 
-![UML Class Diagram](./diagrams/uml-class.svg)
+![UML Class Diagram](./diagrams/uml-class.png)
 
 #### Key Domain Invariants
 1. **Capacity Integrity (No Double-Booking):** Before inserting an `Enrollment`, `Classroom & Enrollment Service` checks current enrollment count against `Classroom.capacity` inside a PostgreSQL transaction; full classrooms reject new enrollments with `HTTP 409 Conflict`.
 2. **Exam Weight Validation:** For any `Classroom`, the sum of `ExamConfig.weightPercentage` across active exams must equal `100%` before a final `ReportCard` is calculated (otherwise returning `HTTP 422 Unprocessable Entity`).
 3. **Make-up Exam Rule:** If a student has a recorded make-up grade (`Grade.isMakeUp = true`), the make-up score overrides the standard final exam score during weighted average calculation.
-4. **Hybrid Scheduling Constraints:** `ScheduleSlot` entries reference `Classroom` schedules while respecting declared `TeacherAvailability` windows, unless explicitly flagged with `isManualOverride = true` by an Administrator.
+4. **Hybrid Scheduling Constraints:** `ScheduleSlot` entries reference `Classroom` schedules while respecting declared `TeacherAvailability` windows, unless explicitly flagged with `isManualOverride = true` by an Manager.
 
 ### 4.3 UML Sequence Diagrams
 
@@ -105,7 +105,7 @@ Demonstrates ownership validation, weight sum verification, make-up override han
 - **Consequences:** Simplifies Docker Compose deployment, avoids distributed transactions across enrollment and grading, and preserves a clear path to extract services later if needed.
 
 ### ADR-02: Local JWT Authentication with bcrypt & RBAC Middleware
-- **Context:** The system requires strict separation between Admin, Teacher, and Student actions without relying on third-party identity providers.
+- **Context:** The system requires strict separation between Manager, Teacher, and Student actions without relying on third-party identity providers.
 - **Decision:** Store salted `bcrypt` password hashes in PostgreSQL and issue signed stateless JWT tokens validated by a centralized Express RBAC middleware.
 - **Consequences:** Eliminates external auth dependencies and enforces consistent `401`/`403` responses across all protected endpoints.
 
