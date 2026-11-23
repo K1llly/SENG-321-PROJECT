@@ -10,7 +10,7 @@
 | Artifact | Link |
 | :--- | :--- |
 | Design file (page **"Prototype v2 (PO feedback)"**) | https://www.figma.com/design/owRoLeG6SQryYmi6nz5RNy |
-| Clickable prototype v2 (starts at Login) | https://www.figma.com/proto/owRoLeG6SQryYmi6nz5RNy?node-id=35-7385&starting-point-node-id=35%3A7385 |
+| Clickable prototype v2 (starts at Login) | https://www.figma.com/proto/owRoLeG6SQryYmi6nz5RNy?node-id=76-1662&starting-point-node-id=76%3A1662 |
 | Clickable prototype v1 (kept for history) | https://www.figma.com/proto/owRoLeG6SQryYmi6nz5RNy?node-id=3-5&starting-point-node-id=3%3A5 |
 | User-flow diagram v1 (FigJam) | https://www.figma.com/board/3D3T8bv8pTcKKhDKpCCEPU |
 
@@ -97,7 +97,7 @@ All screens are desktop web layouts (1440 × 900) for the planned React front en
 **S2 – Exam Results:** every **finalised** exam result shown **next to the class average** (bar comparison and difference). Exams that are not finalised show as *Pending*.
 ![S2 Exam results](screens/s2-student-exam-results.png)
 
-**S3 – Report Card:** per-course midterm (40 %), final (60 %), weighted average, **class average** and Passed / Failed. Formula: `average = midterm × 0.40 + final × 0.60`. Below the threshold → `isPassed: false`.
+**S3 – Report Card:** per-course average calculated from the **per-exam weights the teacher sets** (T3, total 100 %) — the same weights shown in T2 and S2, not a fixed midterm/final split. Formula: `average = Σ(score × weight) ÷ Σ(weights of finalised exams)`. The card is provisional until every exam of a course is finalised; then `isPassed` is set (below the threshold → `false`). Each row shows the exam weights, what is finalised so far, the average and the **class average**.
 ![S3 Report card](screens/s3-student-report-card.png)
 
 ---
