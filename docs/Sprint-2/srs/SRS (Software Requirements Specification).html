@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRS — Education Management System (Team 23, Sprint 2)</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 18mm 16mm;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 24px 0;
+      line-height: 1.55;
+      font-size: 10.5pt;
+    }
+
+    .toolbar {
+      max-width: 210mm;
+      margin: 0 auto 16px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+
+    .toolbar span {
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .print-btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .print-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .document {
+      max-width: 210mm;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20mm 18mm;
+      border-radius: 6px;
+      box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .doc-header {
+      border-bottom: 3px solid #1d4ed8;
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+    }
+
+    .doc-kicker {
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #2563eb;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      font-size: 21pt;
+      color: #0f172a;
+      margin: 0 0 6px 0;
+      line-height: 1.2;
+    }
+
+    .doc-subtitle {
+      font-size: 11pt;
+      color: #475569;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 13.5pt;
+      color: #1e3a8a;
+      border-bottom: 1px solid #cbd5e1;
+      padding-bottom: 4px;
+      margin-top: 24px;
+      margin-bottom: 10px;
+      page-break-after: avoid;
+    }
+
+    h3 {
+      font-size: 11pt;
+      color: #0f172a;
+      margin-top: 16px;
+      margin-bottom: 6px;
+      page-break-after: avoid;
+    }
+
+    p {
+      margin: 0 0 10px 0;
+    }
+
+    ul {
+      margin: 0 0 12px 0;
+      padding-left: 20px;
+    }
+
+    li {
+      margin-bottom: 5px;
+    }
+
+    code {
+      font-family: "Consolas", "SFMono-Regular", Menlo, monospace;
+      font-size: 9.2pt;
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .formula-box {
+      background: #f8fafc;
+      border-left: 3px solid #2563eb;
+      padding: 8px 12px;
+      margin: 8px 0 12px 0;
+      font-family: "Consolas", "SFMono-Regular", Menlo, monospace;
+      font-size: 9.2pt;
+      color: #0f172a;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px 0;
+      font-size: 9.3pt;
+      page-break-inside: auto;
+    }
+
+    tr {
+      page-break-inside: avoid;
+      page-break-after: auto;
+    }
+
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 700;
+    }
+
+    tr:nth-child(even) td {
+      background: #f8fafc;
+    }
+
+    .meta-table th {
+      width: 28%;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+
+    .footer-note {
+      margin-top: 26px;
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 8.8pt;
+      color: #64748b;
+      text-align: center;
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .toolbar {
+        display: none;
+      }
+      .document {
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="toolbar">
+    <span><strong>PDF Export:</strong> Click the button and choose <em>"Save as PDF"</em> (A4, Background graphics ON).</span>
+    <button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <div class="document">
+    <div class="doc-header">
+      <div class="doc-kicker">SENG 321 — Software Engineering Project • Team 23</div>
+      <h1>Software Requirements Specification (SRS)</h1>
+      <p class="doc-subtitle">Education Management System — Modular Student Information System (OBS)</p>
+    </div>
+
+    <table class="meta-table">
+      <tbody>
+        <tr><th>Project Name</th><td>Education Management System (Modular Student Information System — OBS)</td></tr>
+        <tr><th>Course / Team</th><td>SENG 321 — Team 23</td></tr>
+        <tr><th>Prepared By</th><td>Alperen Gökay Göktaş (220201040) — Product Owner &amp; Requirements Engineer</td></tr>
+        <tr><th>Version / Sprint</th><td>v1.0 — Sprint 2 (<code>S2-02</code>)</td></tr>
+        <tr><th>Date</th><td>November 23, 2026</td></tr>
+        <tr><th>GitHub Repository</th><td><code>https://github.com/K1llly/SENG-321-PROJECT</code></td></tr>
+        <tr><th>License</th><td>MIT License</td></tr>
+      </tbody>
+    </table>
+
+    <h2>1. Introduction</h2>
+    <h3>1.1 Purpose</h3>
+    <p>This Software Requirements Specification (SRS) defines the complete functional requirements, role-based interactions, institution-specific business rules, and quality references for the <strong>Education Management System</strong>—a modular, <strong>API-first</strong> Student Information System (OBS) designed for language courses, tutoring centers, K–12 schools (primary, middle, and high schools), and universities. It serves as the single source of truth for the Architecture, Implementation, Quality Assurance (QA), and DevOps teams.</p>
+
+    <h3>1.2 Scope and Scope Lock</h3>
+    <p>The system is built on a fixed core (local authentication, user/institution management, and academic calendar) extended by independent business modules activated according to the selected institution type.</p>
+    <ul>
+      <li><strong>In-Scope:</strong> Institution Creation Tool / Setup Wizard (<code>FR-SETUP</code>), local username/password authentication &amp; RBAC (<code>FR-AUTH</code>), classroom/section capacity &amp; assignments (<code>FR-CLS</code>), daily attendance &amp; absence cutoffs (<code>FR-ATT</code>), flexible exam weighting &amp; report card/transcript engine (<code>FR-GRD</code>), hybrid auto-scheduling (<code>FR-SCH</code>), and reusable mock exam templates (<code>FR-MOCK</code>).</li>
+      <li><strong>Out-of-Scope (Locked Out):</strong> Financial accounting and installment/invoicing modules, SMS/WhatsApp parent notification gateways, live online video-conferencing infrastructure, physical classroom maintenance, and external enterprise SSO/Identity Provider integrations.</li>
+    </ul>
+
+    <h3>1.3 Definitions and Acronyms</h3>
+    <ul>
+      <li><strong>OBS:</strong> Student Information System (<em>Öğrenci Bilgi Sistemi</em>)</li>
+      <li><strong>RBAC / JWT:</strong> Role-Based Access Control / JSON Web Token</li>
+      <li><strong>MEB / ŞÖK:</strong> Ministry of National Education of Türkiye / Branch Teachers' Board (<em>Şube Öğretmenler Kurulu</em>)</li>
+      <li><strong>ECTS (AKTS) / GPA / CGPA:</strong> European Credit Transfer System / Grade Point Average / Cumulative GPA</li>
+    </ul>
+
+    <h2>2. Overall Description</h2>
+    <h3>2.1 User Classes and Roles (RBAC)</h3>
+    <ul>
+      <li><strong>Manager (<code>MANAGER</code>):</strong> Runs initial setup, configures classes/sections and capacities, assigns teachers and students, manages exam weights, mock templates, and hybrid timetables, and generates institutional report cards/transcripts.</li>
+      <li><strong>Teacher (<code>TEACHER</code>):</strong> Records attendance, exam grades, and mock exam scores strictly for assigned classes; submits weekly availability preferences; approves or requests revisions on student course registration drafts in University mode.</li>
+      <li><strong>Student (<code>STUDENT</code>):</strong> Views grades, attendance, timetables, mock exam analytics, and report cards in read-only mode (courses and K–12); creates add/drop course registration drafts in University mode.</li>
+      <li><strong>Parent (<code>PARENT</code> — K–12 Schools Only):</strong> Monitors linked students' attendance, grades, developmental reports, mock exam results, and report cards in read-only mode.</li>
+    </ul>
+
+    <h3>2.2 Technical Constraints and Assumptions</h3>
+    <ul>
+      <li><strong>Architecture &amp; Stack:</strong> Node.js + Express + Prisma + PostgreSQL (Backend), React + Nginx (Frontend), OpenAPI 3.1 (API Contract), Docker &amp; Docker Compose (Deployment), and GitHub Actions (CI/CD).</li>
+      <li><strong>Authentication Assumption:</strong> Users authenticate locally via username and password stored in the system's PostgreSQL database without external SSO providers.</li>
+      <li><strong>Licensing:</strong> Released under the open-source MIT License.</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <h2>3. Functional Requirements</h2>
+
+    <h3>3.1 Institution Creation Tool / Setup Wizard (<code>FR-SETUP</code>)</h3>
+    <ul>
+      <li><strong>FR-SETUP-01 (Institution Type Selection):</strong> During initial setup, the system shall allow the <code>MANAGER</code> to select the institution type: <code>COURSES</code>, <code>PRIMARY_SCHOOL</code>, <code>MIDDLE_SCHOOL</code>, <code>HIGH_SCHOOL</code>, or <code>UNIVERSITY</code>.</li>
+      <li><strong>FR-SETUP-02 (Automatic Regulation &amp; Pass/Fail Strategy):</strong> The system shall automatically activate the corresponding grading and pass/fail rule engine based on the selected institution type.</li>
+      <li><strong>FR-SETUP-03 (Dynamic Module Activation):</strong> Incompatible modules (e.g., Parent Portal in tutoring centers or ECTS course selection in primary schools) shall be automatically disabled and hidden.</li>
+      <li><strong>FR-SETUP-04 (Academic Calendar &amp; Absence Limits):</strong> The wizard shall allow configuring term/level dates and institutional absence thresholds during setup.</li>
+      <li><strong>FR-SETUP-05 (Dynamic Navigation Generation):</strong> Upon completing setup, role-based navigation menus shall render dynamically according to the active institution preset.</li>
+    </ul>
+
+    <h3>3.2 Local Authentication and Authorization (<code>FR-AUTH</code>)</h3>
+    <ul>
+      <li><strong>FR-AUTH-01 (User Login):</strong> The <code>/auth/login</code> endpoint shall validate username/password credentials and issue a signed JWT containing the user's role.</li>
+      <li><strong>FR-AUTH-02 (Invalid Credentials Handling):</strong> Invalid credentials shall be rejected with <code>401 Unauthorized</code>.</li>
+      <li><strong>FR-AUTH-03 (Role-Based Access Enforcement):</strong> Requests targeting resources outside a user's role or class assignment scope shall be rejected with <code>403 Forbidden</code>.</li>
+    </ul>
+
+    <h3>3.3 Classroom, Capacity, and Assignment Management (<code>FR-CLS</code>)</h3>
+    <ul>
+      <li><strong>FR-CLS-01 (Classroom/Section Creation):</strong> A <code>MANAGER</code> shall create classes, course groups, or school sections with a maximum student capacity.</li>
+      <li><strong>FR-CLS-02 (Capacity Input Validation):</strong> Zero or negative capacities shall be rejected with <code>400 Bad Request</code>.</li>
+      <li><strong>FR-CLS-03 (Concurrency &amp; Double-Booking Prevention):</strong> Student enrollment shall verify remaining capacity inside an atomic database transaction to prevent capacity overflow and concurrent double-booking.</li>
+      <li><strong>FR-CLS-04 (Teacher &amp; Student Assignment):</strong> Managers shall assign teachers and enroll students. In K–12 school modes, enrolling a student into a section shall automatically link all section curriculum courses and teachers to that student.</li>
+    </ul>
+
+    <h3>3.4 Attendance and Absence Tracking (<code>FR-ATT</code>)</h3>
+    <ul>
+      <li><strong>FR-ATT-01 (Daily Attendance Entry):</strong> A <code>TEACHER</code> shall record <code>Present</code>, <code>Absent</code>, or <code>Late</code> statuses strictly for assigned classes and dates.</li>
+      <li><strong>FR-ATT-02 (Excused vs. Unexcused Tracking — K–12):</strong> School administrators shall record excused/medical absences separately, maintaining distinct excused and unexcused day counters.</li>
+      <li><strong>FR-ATT-03 (Automatic Attendance Cutoff):</strong> Exceeding the configured absence limit (e.g., 10 unexcused or 30 total days in High School) shall automatically flag the student as "Failed due to Absence" regardless of grade averages.</li>
+    </ul>
+
+    <h3>3.5 Flexible Exam, Grading, and Report Card / Transcript Engine (<code>FR-GRD</code>)</h3>
+    <ul>
+      <li><strong>FR-GRD-01 (Exam Type &amp; Weight Configuration):</strong> Managers/instructors shall define exam types (Written 1/2, Performance, or Midterm/Final/Lab/Makeup) and their percentage weights.</li>
+      <li><strong>FR-GRD-02 (Grade Entry &amp; Range Validation):</strong> Teachers shall enter scores between <code>0</code> and <code>100</code> strictly for assigned classes; out-of-range values shall return <code>400 Bad Request</code>.</li>
+      <li><strong>FR-GRD-03 (Weighted Average &amp; Makeup Override):</strong> The system shall compute weighted averages automatically. In University mode, entering a Makeup (<em>Bütünleme</em>) score shall override the Final score and recalculate the course average.</li>
+      <li><strong>FR-GRD-04 (Institution-Specific Pass/Fail Strategies):</strong>
+        <ul>
+          <li><em>Courses / Tutoring:</em> Evaluates a single threshold (e.g., 70) for "Promoted / Failed".</li>
+          <li><em>Primary School (1–4):</em> Hides numeric score inputs and generates a competency-based Developmental Report.</li>
+          <li><em>Middle School (5–8, MEB):</em> Automatically routes students with Turkish &lt; 70 or any other subject &lt; 50 to the ŞÖK Decision List.</li>
+          <li><em>High School (9–12, MEB):</em> Combines Term 1 and Term 2 averages to compute year-end GPA, direct/conditional pass status, and Honor/High Honor certificates.</li>
+          <li><em>University:</em> Supports absolute or relative (curve) grading for letter grades (<code>AA</code>–<code>FF</code>), term <code>GPA</code>, and cumulative <code>CGPA</code>.</li>
+        </ul>
+      </li>
+      <li><strong>FR-GRD-05 (University Course Registration &amp; Advisor Approval):</strong> Add/drop actions shall validate prerequisites, ECTS limits, time conflicts, and quotas sequentially; drafts require advisor approval and auto-lock when the registration window closes.</li>
+    </ul>
+
+    <h3>3.6 Hybrid and Automatic Weekly Scheduling (<code>FR-SCH</code>)</h3>
+    <ul>
+      <li><strong>FR-SCH-01 (Teacher Availability):</strong> Teachers shall mark weekly grid slots as <code>AVAILABLE</code>, <code>PREFER_NOT</code>, or <code>UNAVAILABLE</code>.</li>
+      <li><strong>FR-SCH-02 (Course Load &amp; Block Splitting):</strong> Managers shall define weekly hours and block rules per section and course (e.g., 6 hours split as <code>[3, 3]</code> across 2 days).</li>
+      <li><strong>FR-SCH-03 (Manual Pinning):</strong> Managers shall manually place and lock specific slots using <code>isPinned: true</code>.</li>
+      <li><strong>FR-SCH-04 (Auto-Fill):</strong> Auto-Fill shall preserve pinned slots and distribute remaining course blocks into valid open slots.</li>
+      <li><strong>FR-SCH-05 (Constraint Enforcement):</strong> The engine shall prevent teacher, section, and room conflicts, room capacity violations, <code>UNAVAILABLE</code> placements, and same-day stacking of split blocks.</li>
+      <li><strong>FR-SCH-06 (Unplaced Reporting &amp; Publishing):</strong> Unplaceable blocks shall be returned in a <code>200 OK</code> response with reasons (e.g., <code>INSUFFICIENT_TEACHER_AVAILABILITY</code>). Setting status to <code>PUBLISHED</code> exposes the schedule in read-only mode to teachers and students.</li>
+    </ul>
+
+    <h3>3.7 Mock Exams and Reusable Templates (<code>FR-MOCK</code>)</h3>
+    <ul>
+      <li><strong>FR-MOCK-01 (Template Management):</strong> Managers shall define reusable templates (<code>MockExamTemplate</code>), subject question counts (<code>MockExamTemplateSection</code>), and wrong-answer penalty ratios (<code>wrongPenaltyRatio</code>).</li>
+      <li><strong>FR-MOCK-02 (Session &amp; Grade Impact Lock):</strong> Managers shall launch sessions (<code>MockExamSession</code>) from templates. In <code>COURSES</code> mode, <code>affectsFinalGrade</code> and <code>weightIfAffected</code> are configurable; in K–12 school modes, <code>affectsFinalGrade</code> is strictly locked to <code>false</code>.</li>
+      <li><strong>FR-MOCK-03 (Result Entry &amp; Bounds Validation):</strong> Teachers shall enter correct and wrong counts per section. The API shall enforce <code>correctCount + wrongCount &lt;= questionCount</code> (rejecting violations with <code>400 Bad Request</code>).</li>
+      <li><strong>FR-MOCK-04 (Automatic Blank &amp; Net Calculation):</strong> The system shall compute blank counts and net scores (<code>MockExamResult</code>) automatically:
+        <div class="formula-box">
+          blankCount = questionCount - (correctCount + wrongCount)<br />
+          netScore = (wrongPenaltyRatio &gt; 0) ? correctCount - (wrongCount / wrongPenaltyRatio) : correctCount
+        </div>
+      </li>
+      <li><strong>FR-MOCK-05 (Separated Reporting):</strong> Student and parent portals shall show mock exam results in a separate read-only tab with historical trend comparisons across sessions of the same template.</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <h2>4. Dynamic Menu Visibility Matrix by Institution Type</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Menu / Feature</th>
+          <th>Courses / Tutoring</th>
+          <th>Primary School</th>
+          <th>Middle / High School</th>
+          <th>University</th>
+          <th>Authorized Roles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Institution Setup Wizard</td><td>Active</td><td>Active</td><td>Active</td><td>Active</td><td><code>MANAGER</code></td></tr>
+        <tr><td>Class / Section &amp; Capacity</td><td>Active</td><td>Active</td><td>Active</td><td>Active (Sections)</td><td><code>MANAGER</code></td></tr>
+        <tr><td>Hybrid Timetable &amp; Availability</td><td>Active</td><td>Active</td><td>Active</td><td>Active</td><td><code>MANAGER</code>, <code>TEACHER</code>, <code>STUDENT</code></td></tr>
+        <tr><td>Attendance &amp; Absence</td><td>Hourly</td><td>Daily</td><td>Excused / Unexcused</td><td>Per-Course</td><td><code>MANAGER</code>, <code>TEACHER</code>, <code>STUDENT</code>, <code>PARENT</code></td></tr>
+        <tr><td>Grading &amp; Evaluation</td><td>Level Score</td><td>Dev. Report</td><td>Written / Perf.</td><td>Midterm / Final / Curve</td><td><code>TEACHER</code>, <code>STUDENT</code>, <code>PARENT</code></td></tr>
+        <tr><td>ŞÖK / Conditional Pass Board</td><td>Hidden</td><td>Hidden</td><td>Active</td><td>Hidden</td><td><code>MANAGER</code></td></tr>
+        <tr><td>Course Selection &amp; Advising</td><td>Hidden</td><td>Hidden</td><td>Hidden</td><td>Active</td><td><code>STUDENT</code>, <code>TEACHER</code>, <code>MANAGER</code></td></tr>
+        <tr><td>Parent Monitoring Portal</td><td>Hidden</td><td>Active</td><td>Active</td><td>Hidden</td><td><code>PARENT</code></td></tr>
+        <tr><td>Mock Exam Templates &amp; Nets</td><td>Active</td><td>Optional / Hidden</td><td>Active</td><td>Optional / Hidden</td><td><code>MANAGER</code>, <code>TEACHER</code>, <code>STUDENT</code>, <code>PARENT</code></td></tr>
+        <tr><td>Report Card / Transcript</td><td>Level Cert.</td><td>Dev. Report</td><td>Report Card + Certs</td><td>Transcript (GPA/CGPA)</td><td>All Roles</td></tr>
+      </tbody>
+    </table>
+
+    <h2>5. Requirements Traceability Matrix (SRS to Backlog)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Backlog ID</th>
+          <th>User Story Summary</th>
+          <th>Linked Functional Requirements</th>
+          <th>Priority</th>
+          <th>Effort</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>US-01</strong></td><td>Local User Authentication (Login &amp; RBAC)</td><td><code>FR-AUTH-01</code> – <code>FR-AUTH-03</code></td><td>High</td><td>3 SP</td></tr>
+        <tr><td><strong>US-02</strong></td><td>Classroom/Section &amp; Capacity Management</td><td><code>FR-CLS-01</code> – <code>FR-CLS-04</code></td><td>Medium</td><td>5 SP</td></tr>
+        <tr><td><strong>US-03</strong></td><td>Exam Grade Entry, Attendance &amp; Weighting</td><td><code>FR-ATT-01</code>–<code>03</code>, <code>FR-GRD-01</code>–<code>02</code></td><td>High</td><td>8 SP</td></tr>
+        <tr><td><strong>US-04</strong></td><td>Weighted Average &amp; Report Card / Transcript Engine</td><td><code>FR-GRD-03</code> – <code>FR-GRD-05</code></td><td>High</td><td>8 SP</td></tr>
+        <tr><td><strong>US-05</strong></td><td>Hybrid &amp; Automatic Weekly Scheduling</td><td><code>FR-SCH-01</code> – <code>FR-SCH-06</code></td><td>High</td><td>8 SP</td></tr>
+        <tr><td><strong>US-06</strong></td><td>Institution Creation Tool / Setup Wizard</td><td><code>FR-SETUP-01</code> – <code>FR-SETUP-05</code></td><td>High</td><td>8 SP</td></tr>
+        <tr><td><strong>US-07</strong></td><td>Mock Exam &amp; Reusable Template Module</td><td><code>FR-MOCK-01</code> – <code>FR-MOCK-05</code></td><td>Medium</td><td>5 SP</td></tr>
+      </tbody>
+    </table>
+
+    <h2>6. Non-Functional Requirements &amp; Quality Summary (Cross-Reference)</h2>
+    <p>Detailed metrics and verification gates are maintained in <strong><code>[S2-05]</code> Non-Functional Requirements (Reyhan Çetin)</strong> and <strong><code>[S2-06]</code> Quality Measures &amp; Test Strategy (Serhat Eroğlu)</strong>. Core targets aligned with this SRS include:</p>
+    <ul>
+      <li><strong>Security:</strong> Passwords hashed with <code>bcrypt</code>; JWT authentication and RBAC (<code>401</code>/<code>403</code>) enforced on all protected routes.</li>
+      <li><strong>Data Integrity &amp; Concurrency:</strong> Capacity limits, schedule conflict checks, and concurrent enrollments protected via atomic PostgreSQL transactions.</li>
+      <li><strong>Portability:</strong> Full stack (React, Node.js API, PostgreSQL) runs via a single <code>docker compose up</code> command.</li>
+      <li><strong>Quality &amp; Test Coverage:</strong> Minimum <strong>50% unit test coverage</strong> (Jest/Vitest) on core business logic, SonarQube static analysis gates, and OpenAPI 3.1 contract compliance.</li>
+    </ul>
+
+    <div class="footer-note">
+      SENG 321 — Team 23 • Education Management System • Software Requirements Specification (v1.0 — Sprint 2)
+    </div>
+  </div>
+
+</body>
+</html>
