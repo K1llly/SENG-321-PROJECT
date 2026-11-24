@@ -1,5 +1,30 @@
-# Education Management System - SENG 321 Sprint 1
-## Team 23
+# Education Management System — SENG 321 (Team 23)
+## Modular Student Information System (OBS) · API-First · Modular Monolith
+
+![Status](https://img.shields.io/badge/sprint-2-blue) ![License](https://img.shields.io/badge/license-MIT-green)
+
+**Repository:** https://github.com/K1llly/SENG-321-PROJECT · **Releases:** [sprint-1](https://github.com/K1llly/SENG-321-PROJECT/releases/tag/sprint-1) · [sprint-2](https://github.com/K1llly/SENG-321-PROJECT/releases/tag/sprint-2)
+
+---
+
+## Sprint 2 Deliverables (Requirements, UI/UX & Architecture)
+
+Sprint 2 is a specification sprint — no product code is delivered in it.
+
+| # | Deliverable | Document | Owner |
+| :--- | :--- | :--- | :--- |
+| 1 | Software Requirements Specification (SRS) + refined backlog (US-01 … US-07) | [HTML](<docs/Sprint-2/srs/SRS (Software Requirements Specification).html>) · [PDF](<docs/Sprint-2/srs/Software Requirements Specification (SRS).pdf>) | Alperen Gökay Göktaş |
+| 2 | Non-Functional Requirements | [NFR_Specification.md](docs/Sprint-2/NFR_Specification.md) | Reyhan Çetin |
+| 2 | Quality Measures & Verification Plan | [Quality_Measures_Specification.md](docs/Sprint-2/Quality_Measures_Specification.md) | Serhat Eroğlu |
+| 3 | UI/UX prototypes + user-flow diagrams (Figma) | [UI_UX_Prototypes.md](docs/Sprint-2/UI-UX/UI_UX_Prototypes.md) | Muhammed Ökmen |
+| 4 | Software architecture — C4 models, UML, ADRs | [Architecture.md](docs/Sprint-2/architecture/Architecture.md) | Berkay Kervan |
+| — | API contract (OpenAPI 3.1) | [api/seng321-project.yaml](api/seng321-project.yaml) | Muhammed Ökmen / Berkay Kervan |
+
+Requirement IDs, traceability (`US-01` … `US-07` → `FR-*`), the scope phasing (MVP vs final) and the institution-type menu matrix live in the SRS.
+
+---
+
+## Sprint 1 Deliverables (Project Foundation)
 
 ### Team Members and Roles (RACI Matrix)
 
@@ -72,10 +97,12 @@ The Education Management System automates assignment processes to provide reliab
 
 | ID | User Story | Acceptance Criteria | Effort (SP) | Issue |
 | :--- | :--- | :--- | :---: | :--- |
-| US-01 | As a user, I want to log in with my username and password to access the system. | Successful login generates a role-based token; invalid credentials return a 401 error. | 3 | [#1](https://github.com/K1llly/SENG-321-PROJECT/issues/1) |
+| US-01 | As a user, I want to log in with my username and password to access the system. | Successful login generates a role-based token; invalid credentials return a 401 error. | 3 | [#9](https://github.com/K1llly/SENG-321-PROJECT/issues/9) |
 | US-02 | As a manager, I want to create a class and define its maximum capacity. | Capacity cannot be negative and must be saved to the DB. | 5 | [#2](https://github.com/K1llly/SENG-321-PROJECT/issues/2) |
 | US-03 | As a teacher, I want to enter exam types and grades for students in my assigned classes. | Grades must be between 0-100; unauthorized access must be blocked. | 8 | [#3](https://github.com/K1llly/SENG-321-PROJECT/issues/3) |
 | US-04 | As the system, I want to calculate the weighted grade average and determine the pass/fail status. | Weights (midterm/final) are summed up; below-threshold scores yield a "fail" status. | 8 | [#4](https://github.com/K1llly/SENG-321-PROJECT/issues/4) |
+
+Sprint 2 adds **US-05** (hybrid auto-scheduling, [#21](https://github.com/K1llly/SENG-321-PROJECT/issues/21)), **US-06** (setup wizard, [#22](https://github.com/K1llly/SENG-321-PROJECT/issues/22)) and **US-07** (mock exams, [#23](https://github.com/K1llly/SENG-321-PROJECT/issues/23)); their full user stories and acceptance criteria are in [SRS §4](<docs/Sprint-2/srs/SRS (Software Requirements Specification).html>).
 
 ---
 
@@ -83,17 +110,21 @@ The Education Management System automates assignment processes to provide reliab
 
 ```
 .
-├── api/        # OpenAPI contract (API-first design)
-├── docs/       # Sprint deliverables (PDF reports)
-├── src/        # Application source code
-├── tests/      # Automated tests
-├── LICENSE     # MIT License
+├── api/                  # OpenAPI 3.1 contract (API-first design)
+├── docs/
+│   ├── Sprint-2/         # SRS, NFR, quality measures, UI/UX, architecture
+│   └── Sprint_1_Project_Foundation_Team23.pdf
+├── src/                  # Application source code (Sprint 3)
+├── tests/                # Automated tests (Sprint 3)
+├── CONTRIBUTIONS.md      # Per-member contribution log
+├── LICENSE               # MIT License
 └── README.md
 ```
 
 ### 6. Sprint Documents
 
 * **Sprint 1 – Project Foundation:** [docs/Sprint_1_Project_Foundation_Team23.pdf](docs/Sprint_1_Project_Foundation_Team23.pdf)
+* **Sprint 2 – Requirements, UI/UX & Architecture:** see the [deliverables table](#sprint-2-deliverables-requirements-uiux--architecture) above (SRS, NFR, quality measures, Figma prototypes, C4/UML architecture).
 
 ### License
 
