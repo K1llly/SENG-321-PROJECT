@@ -191,6 +191,41 @@
       text-align: center;
     }
 
+    .story {
+      page-break-inside: auto;
+    }
+
+    .story-statement {
+      page-break-inside: avoid;
+      background: #eff6ff;
+      border-left: 3px solid #2563eb;
+      padding: 8px 12px;
+      margin: 4px 0 8px 0;
+      font-size: 9.8pt;
+    }
+
+    .story-meta {
+      font-size: 8.8pt;
+      color: #475569;
+      margin: 0 0 6px 0;
+    }
+
+    .ac-label {
+      font-weight: 700;
+      font-size: 9.6pt;
+      color: #1e3a8a;
+      margin: 0 0 4px 0;
+    }
+
+    .ac-list {
+      margin: 0 0 6px 0;
+      padding-left: 20px;
+    }
+
+    .ac-list li {
+      margin-bottom: 4px;
+    }
+
     @media print {
       body {
         background: #ffffff;
@@ -227,8 +262,8 @@
         <tr><th>Project Name</th><td>Education Management System (Modular Student Information System — OBS)</td></tr>
         <tr><th>Course / Team</th><td>SENG 321 — Team 23</td></tr>
         <tr><th>Prepared By</th><td>Alperen Gökay Göktaş (220201040) — Product Owner &amp; Requirements Engineer</td></tr>
-        <tr><th>Version / Sprint</th><td>v1.0 — Sprint 2 (<code>S2-02</code>)</td></tr>
-        <tr><th>Date</th><td>November 23, 2026</td></tr>
+        <tr><th>Version / Sprint</th><td>v1.1 — Sprint 2 (<code>S2-02</code>, user stories and acceptance criteria added)</td></tr>
+        <tr><th>Date</th><td>November 24, 2026</td></tr>
         <tr><th>GitHub Repository</th><td><code>https://github.com/K1llly/SENG-321-PROJECT</code></td></tr>
         <tr><th>License</th><td>MIT License</td></tr>
       </tbody>
@@ -347,7 +382,117 @@
 
     <div class="page-break"></div>
 
-    <h2>4. Dynamic Menu Visibility Matrix by Institution Type</h2>
+    <h2>4. User Stories and Acceptance Criteria</h2>
+    <p>This section restates the backlog items of the traceability matrix (Section 6) as user stories in the standard <em>“As a … I want … so that …”</em> form and attaches the acceptance criteria that will be used to verify each story during implementation and Sprint review. Every acceptance criterion is derived from, and traceable to, the numbered functional requirements in Section 3. A story is considered <strong>Done</strong> only when all of its acceptance criteria are met.</p>
+
+    <div class="story">
+      <h3>US-01 — Local User Authentication (Login &amp; RBAC)</h3>
+      <p class="story-meta">Primary role: all roles (<code>MANAGER</code>, <code>TEACHER</code>, <code>STUDENT</code>, <code>PARENT</code>) · Requirements: <code>FR-AUTH-01</code> – <code>FR-AUTH-03</code> · Priority: High · Effort: 3 SP</p>
+      <p class="story-statement"><strong>As a</strong> registered user of the institution, <strong>I want</strong> to sign in with my username and password <strong>so that</strong> I can access exactly the functions and data my role is allowed to see.</p>
+      <p class="ac-label">Acceptance criteria</p>
+      <ul class="ac-list">
+        <li><strong>AC-01.1</strong> Given a registered username and the correct password, when the user submits the login form, then <code>POST /auth/login</code> returns <code>200 OK</code> with a signed JWT that carries the user's identifier and role, and the user is routed to the menu of that role.</li>
+        <li><strong>AC-01.2</strong> Given a wrong password or an unknown username, when the user submits the login form, then the API returns <code>401 Unauthorized</code>, no token is issued, and the response does not reveal which of the two values was incorrect.</li>
+        <li><strong>AC-01.3</strong> Passwords are persisted only as <code>bcrypt</code> hashes; no plaintext or hash is ever returned by an API response or written to the logs.</li>
+        <li><strong>AC-01.4</strong> When a protected endpoint is called without a token, with an expired token, or with a tampered token, then the API returns <code>401 Unauthorized</code>.</li>
+        <li><strong>AC-01.5</strong> When an authenticated user requests a resource outside their role or class assignment (for example, a <code>TEACHER</code> opening a section that is not assigned to them, or a <code>STUDENT</code> calling a grade-entry endpoint), then the API returns <code>403 Forbidden</code> and no data is disclosed.</li>
+        <li><strong>AC-01.6</strong> After login, the rendered navigation contains only the modules that the Section 5 visibility matrix marks as active for the user's role and institution type.</li>
+      </ul>
+    </div>
+
+    <div class="story">
+      <h3>US-02 — Classroom / Section &amp; Capacity Management</h3>
+      <p class="story-meta">Primary role: <code>MANAGER</code> · Requirements: <code>FR-CLS-01</code> – <code>FR-CLS-04</code> · Priority: Medium · Effort: 5 SP</p>
+      <p class="story-statement"><strong>As a</strong> Manager, <strong>I want</strong> to create classes/sections with a maximum capacity and assign the teachers and students of each one <strong>so that</strong> the academic structure of the institution is modelled accurately and can never be overbooked.</p>
+      <p class="ac-label">Acceptance criteria</p>
+      <ul class="ac-list">
+        <li><strong>AC-02.1</strong> Given a Manager session, when the Manager creates a class/section (or course group) with a name and a maximum capacity, then the section is persisted and listed with its current occupancy and remaining capacity.</li>
+        <li><strong>AC-02.2</strong> When a capacity of <code>0</code> or a negative value is submitted, then the API returns <code>400 Bad Request</code> and no section is created.</li>
+        <li><strong>AC-02.3</strong> When two enrollments for the last free seat of a section are submitted at the same time, then exactly one succeeds and the section's enrollment count never exceeds its configured capacity; the capacity check and the insert run inside a single atomic database transaction.</li>
+        <li><strong>AC-02.4</strong> When the Manager assigns a teacher to a section or enrolls a student, then only existing, active users of the matching role can be selected, and the assignment is reflected in the teacher's and the student's own views.</li>
+        <li><strong>AC-02.5</strong> In K–12 institution modes, when a student is enrolled in a section, then all curriculum courses and teachers of that section are automatically linked to the student without a second manual step.</li>
+      </ul>
+    </div>
+
+    <div class="story">
+      <h3>US-03 — Exam Grade Entry, Attendance &amp; Weighting</h3>
+      <p class="story-meta">Primary roles: <code>TEACHER</code> (entry), <code>MANAGER</code> (configuration) · Requirements: <code>FR-ATT-01</code> – <code>FR-ATT-03</code>, <code>FR-GRD-01</code> – <code>FR-GRD-02</code> · Priority: High · Effort: 8 SP</p>
+      <p class="story-statement"><strong>As a</strong> Teacher, <strong>I want</strong> to record daily attendance and exam scores for my assigned classes, using the exam weights configured by my institution, <strong>so that</strong> every student's progress is captured consistently and can later be turned into a legally correct report card.</p>
+      <p class="ac-label">Acceptance criteria</p>
+      <ul class="ac-list">
+        <li><strong>AC-03.1</strong> Given a Teacher assigned to a class, when the Teacher records attendance for a date, then each student receives exactly one status of <code>Present</code>, <code>Absent</code>, or <code>Late</code> for that date, and re-entering the same date updates the existing record instead of duplicating it.</li>
+        <li><strong>AC-03.2</strong> When a Teacher tries to record attendance or grades for a class or date that is not assigned to them, then the API returns <code>403 Forbidden</code> and nothing is stored.</li>
+        <li><strong>AC-03.3</strong> In K–12 modes, when a school administrator marks an absence as excused/medical, then the excused and unexcused day counters of the student are incremented separately and both remain visible.</li>
+        <li><strong>AC-03.4</strong> When a student's excused/unexcused or total absence days exceed the threshold configured for the institution type (for example 10 unexcused or 30 total days in High School), then the student is automatically flagged as <em>Failed due to Absence</em> regardless of the grade average.</li>
+        <li><strong>AC-03.5</strong> Given an institution type, when the Manager defines exam types and their percentage weights, then the configured set is offered in the grade-entry screen of the assigned teachers and is persisted per course/section.</li>
+        <li><strong>AC-03.6</strong> When a score outside the <code>0</code>–<code>100</code> range (including non-numeric input) is submitted, then the API returns <code>400 Bad Request</code> and the previously stored score is left unchanged.</li>
+        <li><strong>AC-03.7</strong> When a valid score is accepted, then it is stored against the correct student, exam type, and section, and the weighted average of that student is recalculated immediately.</li>
+      </ul>
+    </div>
+
+    <div class="story">
+      <h3>US-04 — Weighted Average &amp; Report Card / Transcript Engine</h3>
+      <p class="story-meta">Primary roles: <code>MANAGER</code> (generation), <code>STUDENT</code> / <code>PARENT</code> (read-only) · Requirements: <code>FR-GRD-03</code> – <code>FR-GRD-05</code> · Priority: High · Effort: 8 SP</p>
+      <p class="story-statement"><strong>As a</strong> Student (and, in K–12, as the Parent of a student), <strong>I want</strong> my weighted averages, report card, or transcript to be computed automatically according to the rules of my institution type <strong>so that</strong> I always see an accurate and explainable academic standing.</p>
+      <p class="ac-label">Acceptance criteria</p>
+      <ul class="ac-list">
+        <li><strong>AC-04.1</strong> The course average equals the sum of (score × weight) over all exam types with at least one entered score, divided by the sum of the weights of those exam types, and it is recomputed whenever a score or a weight changes.</li>
+        <li><strong>AC-04.2</strong> In University mode, when a Makeup (<em>Bütünleme</em>) score is entered, then it replaces the Final score in the calculation and the course average and letter grade are recalculated.</li>
+        <li><strong>AC-04.3</strong> The pass/fail decision follows the strategy of the selected institution type: a single threshold in Courses/Tutoring mode; a competency-based Developmental Report with no numeric score in Primary School; a ŞÖK decision list for students with Turkish &lt; 70 or any other subject &lt; 50 in Middle School; Term 1 + Term 2 year-end GPA with direct/conditional pass and Honor/High Honor certificates in High School; absolute or curve letter grades (<code>AA</code>–<code>FF</code>) with term <code>GPA</code> and cumulative <code>CGPA</code> in University mode.</li>
+        <li><strong>AC-04.4</strong> When a report card or transcript is opened, then every displayed average can be traced back to its component scores and weights, and the document shows the institution name, the student, the term, and the generation date.</li>
+        <li><strong>AC-04.5</strong> <code>STUDENT</code> and <code>PARENT</code> accounts can only read report cards/transcripts and cannot create, edit, or regenerate them; <code>MANAGER</code> accounts can generate institutional report cards for the whole institution.</li>
+        <li><strong>AC-04.6</strong> In University mode, when a student submits an add/drop draft, then prerequisites, ECTS limits, time conflicts, and quotas are validated in that order and every violation is reported with its specific reason; a draft stays pending until the assigned advisor approves it.</li>
+        <li><strong>AC-04.7</strong> When the course-registration window closes, then all pending drafts are locked automatically and the student can no longer modify them.</li>
+      </ul>
+    </div>
+
+    <div class="story">
+      <h3>US-05 — Hybrid &amp; Automatic Weekly Scheduling</h3>
+      <p class="story-meta">Primary role: <code>MANAGER</code> (build/publish), <code>TEACHER</code> (availability), all roles (read-only) · Requirements: <code>FR-SCH-01</code> – <code>FR-SCH-06</code> · Priority: High · Effort: 8 SP</p>
+      <p class="story-statement"><strong>As a</strong> Manager, <strong>I want</strong> to build the weekly timetable from teacher availability and course block rules, with an option to auto-fill the remaining slots <strong>so that</strong> a conflict-free schedule can be published in minutes instead of being assembled by hand.</p>
+      <p class="ac-label">Acceptance criteria</p>
+      <ul class="ac-list">
+        <li><strong>AC-05.1</strong> A Teacher can mark each slot of the weekly grid as <code>AVAILABLE</code>, <code>PREFER_NOT</code>, or <code>UNAVAILABLE</code>, and the saved preferences are visible to the Manager before scheduling.</li>
+        <li><strong>AC-05.2</strong> A Manager can define the weekly hours and the block-splitting rule per section and course (for example 6 hours split as <code>[3, 3]</code> across two days), and the engine only produces blocks that match the configured split.</li>
+        <li><strong>AC-05.3</strong> A Manager can place a lesson manually and lock it; the locked slot is stored with <code>isPinned: true</code> and is never moved by Auto-Fill.</li>
+        <li><strong>AC-05.4</strong> When Auto-Fill is executed, then all pinned slots are preserved and the remaining blocks are distributed into valid open slots, or reported as unplaceable.</li>
+        <li><strong>AC-05.5</strong> The engine rejects any placement that would create a teacher, section, or room conflict, exceed room capacity, fall on an <code>UNAVAILABLE</code> teacher slot, or put two parts of the same split block on the same day.</li>
+        <li><strong>AC-05.6</strong> When a block cannot be placed, then the response is still <code>200 OK</code> and lists the block together with a machine-readable reason (for example <code>INSUFFICIENT_TEACHER_AVAILABILITY</code>).</li>
+        <li><strong>AC-05.7</strong> When the Manager sets the schedule status to <code>PUBLISHED</code>, then teachers and students see the timetable in read-only mode and cannot modify it; before publication it is visible only to the Manager.</li>
+      </ul>
+    </div>
+
+    <div class="story">
+      <h3>US-06 — Institution Creation Tool / Setup Wizard</h3>
+      <p class="story-meta">Primary role: <code>MANAGER</code> · Requirements: <code>FR-SETUP-01</code> – <code>FR-SETUP-05</code> · Priority: High · Effort: 8 SP</p>
+      <p class="story-statement"><strong>As a</strong> Manager, <strong>I want</strong> to configure my institution once through a guided setup <strong>so that</strong> the system activates exactly the rules, modules, and menus that fit my institution type and nothing that does not apply to it.</p>
+      <p class="ac-label">Acceptance criteria</p>
+      <ul class="ac-list">
+        <li><strong>AC-06.1</strong> Given a fresh installation, when the Manager runs the wizard, then the institution type can be selected from <code>COURSES</code>, <code>PRIMARY_SCHOOL</code>, <code>MIDDLE_SCHOOL</code>, <code>HIGH_SCHOOL</code>, or <code>UNIVERSITY</code>.</li>
+        <li><strong>AC-06.2</strong> When an institution type is selected, then the matching grading, pass/fail, and absence rule engine is activated automatically without further configuration.</li>
+        <li><strong>AC-06.3</strong> After setup, modules that are incompatible with the selected type (for example the Parent Portal in a tutoring centre or ECTS course selection in a primary school) are disabled both in the API and in the navigation.</li>
+        <li><strong>AC-06.4</strong> During setup the Manager can enter term/level dates and the institutional absence thresholds, and the values are persisted and used by the attendance module.</li>
+        <li><strong>AC-06.5</strong> When setup is completed, the role-based navigation is generated dynamically from the active institution preset for every subsequent login, and the wizard is not shown again.</li>
+      </ul>
+    </div>
+
+    <div class="story">
+      <h3>US-07 — Mock Exam &amp; Reusable Template Module</h3>
+      <p class="story-meta">Primary roles: <code>MANAGER</code> (templates), <code>TEACHER</code> (results), <code>STUDENT</code> / <code>PARENT</code> (read-only) · Requirements: <code>FR-MOCK-01</code> – <code>FR-MOCK-05</code> · Priority: Medium · Effort: 5 SP</p>
+      <p class="story-statement"><strong>As a</strong> Manager, <strong>I want</strong> to define reusable mock exam templates and launch sessions from them, and <strong>as a</strong> Student or Parent, <strong>I want</strong> to follow the resulting net scores over time <strong>so that</strong> exam readiness can be tracked without touching official grades.</p>
+      <p class="ac-label">Acceptance criteria</p>
+      <ul class="ac-list">
+        <li><strong>AC-07.1</strong> A Manager can create a template (<code>MockExamTemplate</code>) with one or more sections (<code>MockExamTemplateSection</code>) that define the question count per subject and a <code>wrongPenaltyRatio</code>.</li>
+        <li><strong>AC-07.2</strong> A Manager can launch a session (<code>MockExamSession</code>) from a template; in <code>COURSES</code> mode <code>affectsFinalGrade</code> and <code>weightIfAffected</code> are configurable, while in K–12 modes <code>affectsFinalGrade</code> is forced to <code>false</code> and cannot be changed.</li>
+        <li><strong>AC-07.3</strong> A Teacher can enter <code>correctCount</code> and <code>wrongCount</code> per section; when <code>correctCount + wrongCount</code> exceeds the section's <code>questionCount</code>, the API returns <code>400 Bad Request</code> and stores nothing.</li>
+        <li><strong>AC-07.4</strong> After valid result entry the system computes and stores the blank count and the net score as <code>blankCount = questionCount − (correctCount + wrongCount)</code> and <code>netScore = correctCount − (wrongCount / wrongPenaltyRatio)</code> when <code>wrongPenaltyRatio &gt; 0</code>, otherwise <code>netScore = correctCount</code>.</li>
+        <li><strong>AC-07.5</strong> Students and Parents see mock exam results in a separate read-only tab that compares the current net score with the previous sessions of the same template, and this tab never mixes mock results with official course grades.</li>
+      </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2>5. Dynamic Menu Visibility Matrix by Institution Type</h2>
     <table>
       <thead>
         <tr>
@@ -373,7 +518,8 @@
       </tbody>
     </table>
 
-    <h2>5. Requirements Traceability Matrix (SRS to Backlog)</h2>
+    <h2>6. Requirements Traceability Matrix (SRS to Backlog)</h2>
+    <p>The acceptance criteria of each backlog item are defined in Section 4. The matrix below links every user story to its functional requirements, priority, and effort estimate.</p>
     <table>
       <thead>
         <tr>
@@ -395,7 +541,7 @@
       </tbody>
     </table>
 
-    <h2>6. Non-Functional Requirements &amp; Quality Summary (Cross-Reference)</h2>
+    <h2>7. Non-Functional Requirements &amp; Quality Summary (Cross-Reference)</h2>
     <p>Detailed metrics and verification gates are maintained in <strong><code>[S2-05]</code> Non-Functional Requirements (Reyhan Çetin)</strong> and <strong><code>[S2-06]</code> Quality Measures &amp; Test Strategy (Serhat Eroğlu)</strong>. Core targets aligned with this SRS include:</p>
     <ul>
       <li><strong>Security:</strong> Passwords hashed with <code>bcrypt</code>; JWT authentication and RBAC (<code>401</code>/<code>403</code>) enforced on all protected routes.</li>
@@ -405,7 +551,7 @@
     </ul>
 
     <div class="footer-note">
-      SENG 321 — Team 23 • Education Management System • Software Requirements Specification (v1.0 — Sprint 2)
+      SENG 321 — Team 23 • Education Management System • Software Requirements Specification (v1.1 — Sprint 2)
     </div>
   </div>
 
