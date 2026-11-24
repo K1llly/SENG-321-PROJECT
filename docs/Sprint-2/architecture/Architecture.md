@@ -9,7 +9,9 @@
 
 ## 1. System Overview & Architectural Style
 
-The **Education Management System (EMS)** is a web-based academic management platform serving three distinct user roles: **Manager**, **Teacher**, and **Student**. The system covers local authentication and role-based access control (RBAC), institution setup presets, classroom and capacity management, teacher availability and hybrid scheduling, daily attendance tracking, mock exam templates, flexible exam weighting, and automated report card generation. Out-of-scope domains (accounting/billing, SMS notifications, and live online video classes) are intentionally excluded.
+The **Education Management System (EMS)** is a web-based academic management platform serving four roles — **Manager**, **Teacher**, **Student**, and **Parent** (read-only, K–12 institutions only). The system covers local authentication and role-based access control (RBAC), institution setup presets, classroom and capacity management, teacher availability and hybrid scheduling, daily attendance tracking, mock exam templates, flexible exam weighting, and automated report card generation. Out-of-scope domains (accounting/billing, SMS notifications, and live online video classes) are intentionally excluded.
+
+> **Scope phasing and terminology.** This document describes the whole specified product; delivery is phased (see SRS §1.3). The C4, use-case, and sequence models in this document cover the three authenticated MVP roles (`MANAGER`, `TEACHER`, `STUDENT`); the `PARENT` read-only portal is specified for the final phase. In these models **Classroom** is the persistent entity described in the SRS as a *class / section / course group* (`FR-CLS`), and API paths follow `api/seng321-project.yaml` (`GET /classes`, `GET /students/{studentId}/report-card`).
 
 ### Architectural Style
 The system adopts a **Modular Monolith** organized as a **Layered Architecture (Controller → Service → Repository/ORM)** with an **API-First REST** design:
