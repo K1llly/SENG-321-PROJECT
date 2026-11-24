@@ -280,7 +280,27 @@
       <li><strong>Out-of-Scope (Locked Out):</strong> Financial accounting and installment/invoicing modules, SMS/WhatsApp parent notification gateways, live online video-conferencing infrastructure, physical classroom maintenance, and external enterprise SSO/Identity Provider integrations.</li>
     </ul>
 
-    <h3>1.3 Definitions and Acronyms</h3>
+    <h3>1.3 Scope Phasing (Sprint 2 Specification vs Delivery)</h3>
+    <p>The complete scope is specified here in Sprint 2, but it is delivered in phases. Nothing below is out of scope; the table only records when each capability is planned to be implemented, so that the SRS, the architecture, the prototypes, and the backlog stay aligned.</p>
+    <table>
+      <thead>
+        <tr><th>Capability</th><th>Specified In</th><th>Planned Delivery</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Local authentication &amp; RBAC (<code>MANAGER</code>, <code>TEACHER</code>, <code>STUDENT</code>)</td><td><code>FR-AUTH-01</code> – <code>FR-AUTH-03</code></td><td>Sprint 3 (MVP)</td></tr>
+        <tr><td>Classes/sections, capacity &amp; assignments</td><td><code>FR-CLS-01</code> – <code>FR-CLS-04</code></td><td>Sprint 3 (MVP)</td></tr>
+        <tr><td>Setup Wizard core (institution type, preset, calendar)</td><td><code>FR-SETUP-01</code> – <code>FR-SETUP-05</code></td><td>Sprint 3 (MVP); dynamic menus completed in Sprint 4</td></tr>
+        <tr><td>Attendance, exam weighting, weighted average, courses pass/fail report card</td><td><code>FR-ATT-01</code> – <code>FR-ATT-03</code>, <code>FR-GRD-01</code> – <code>FR-GRD-03</code></td><td>Sprint 3 (MVP)</td></tr>
+        <tr><td>Institution-specific strategies: Primary developmental report, Middle-school ŞÖK list, High-school year-end GPA/certificates, University curriculum, curve grading, GPA/CGPA</td><td><code>FR-GRD-04</code></td><td>Sprint 4 (Final)</td></tr>
+        <tr><td>University add/drop course registration &amp; advisor approval</td><td><code>FR-GRD-05</code></td><td>Sprint 4 (Final)</td></tr>
+        <tr><td>Hybrid and automatic weekly scheduling</td><td><code>FR-SCH-01</code> – <code>FR-SCH-06</code></td><td>Sprint 4 (Final)</td></tr>
+        <tr><td>Mock exams and reusable templates</td><td><code>FR-MOCK-01</code> – <code>FR-MOCK-05</code></td><td>Sprint 4 (Final)</td></tr>
+        <tr><td><code>PARENT</code> portal (K–12 only, read-only)</td><td>Section 2.1, <code>FR-MOCK-05</code></td><td>Sprint 4 (Final)</td></tr>
+      </tbody>
+    </table>
+    <p>The <code>PARENT</code> role is therefore part of the specified product but not of the MVP; the UI/UX prototypes and the current C4 models cover the three authenticated MVP roles.</p>
+
+    <h3>1.4 Definitions and Acronyms</h3>
     <ul>
       <li><strong>OBS:</strong> Student Information System (<em>Öğrenci Bilgi Sistemi</em>)</li>
       <li><strong>RBAC / JWT:</strong> Role-Based Access Control / JSON Web Token</li>
@@ -291,8 +311,8 @@
     <h2>2. Overall Description</h2>
     <h3>2.1 User Classes and Roles (RBAC)</h3>
     <ul>
-      <li><strong>Manager (<code>MANAGER</code>):</strong> Runs initial setup, configures classes/sections and capacities, assigns teachers and students, manages exam weights, mock templates, and hybrid timetables, and generates institutional report cards/transcripts.</li>
-      <li><strong>Teacher (<code>TEACHER</code>):</strong> Records attendance, exam grades, and mock exam scores strictly for assigned classes; submits weekly availability preferences; approves or requests revisions on student course registration drafts in University mode.</li>
+      <li><strong>Manager (<code>MANAGER</code>):</strong> Runs initial setup, configures classes/sections and capacities, assigns teachers and students, manages mock exam templates and hybrid timetables, and generates institutional report cards/transcripts. Exam weights belong to the teacher of the course (see <code>FR-GRD-01</code>).</li>
+      <li><strong>Teacher (<code>TEACHER</code>):</strong> Defines the exam types and percentage weights of own courses, records attendance, exam grades, and mock exam scores strictly for assigned classes, submits weekly availability preferences, and approves or requests revisions on student course registration drafts in University mode.</li>
       <li><strong>Student (<code>STUDENT</code>):</strong> Views grades, attendance, timetables, mock exam analytics, and report cards in read-only mode (courses and K–12); creates add/drop course registration drafts in University mode.</li>
       <li><strong>Parent (<code>PARENT</code> — K–12 Schools Only):</strong> Monitors linked students' attendance, grades, developmental reports, mock exam results, and report cards in read-only mode.</li>
     </ul>
@@ -341,7 +361,7 @@
 
     <h3>3.5 Flexible Exam, Grading, and Report Card / Transcript Engine (<code>FR-GRD</code>)</h3>
     <ul>
-      <li><strong>FR-GRD-01 (Exam Type &amp; Weight Configuration):</strong> Managers/instructors shall define exam types (Written 1/2, Performance, or Midterm/Final/Lab/Makeup) and their percentage weights.</li>
+      <li><strong>FR-GRD-01 (Exam Type &amp; Weight Configuration):</strong> The <code>TEACHER</code> assigned to a course shall define its exam types (Written 1/2, Performance, or Midterm/Final/Lab/Makeup) and their percentage weights. The weights of the active exam types of a course shall sum to <code>100%</code>; a configuration that does not is rejected. The manager may review the configuration but does not own it.</li>
       <li><strong>FR-GRD-02 (Grade Entry &amp; Range Validation):</strong> Teachers shall enter scores between <code>0</code> and <code>100</code> strictly for assigned classes; out-of-range values shall return <code>400 Bad Request</code>.</li>
       <li><strong>FR-GRD-03 (Weighted Average &amp; Makeup Override):</strong> The system shall compute weighted averages automatically. In University mode, entering a Makeup (<em>Bütünleme</em>) score shall override the Final score and recalculate the course average.</li>
       <li><strong>FR-GRD-04 (Institution-Specific Pass/Fail Strategies):</strong>
@@ -416,7 +436,7 @@
 
     <div class="story">
       <h3>US-03 — Exam Grade Entry, Attendance &amp; Weighting</h3>
-      <p class="story-meta">Primary roles: <code>TEACHER</code> (entry), <code>MANAGER</code> (configuration) · Requirements: <code>FR-ATT-01</code> – <code>FR-ATT-03</code>, <code>FR-GRD-01</code> – <code>FR-GRD-02</code> · Priority: High · Effort: 8 SP</p>
+      <p class="story-meta">Primary role: <code>TEACHER</code> · Requirements: <code>FR-ATT-01</code> – <code>FR-ATT-03</code>, <code>FR-GRD-01</code> – <code>FR-GRD-02</code> · Priority: High · Effort: 8 SP</p>
       <p class="story-statement"><strong>As a</strong> Teacher, <strong>I want</strong> to record daily attendance and exam scores for my assigned classes, using the exam weights configured by my institution, <strong>so that</strong> every student's progress is captured consistently and can later be turned into a legally correct report card.</p>
       <p class="ac-label">Acceptance criteria</p>
       <ul class="ac-list">
@@ -424,7 +444,7 @@
         <li><strong>AC-03.2</strong> When a Teacher tries to record attendance or grades for a class or date that is not assigned to them, then the API returns <code>403 Forbidden</code> and nothing is stored.</li>
         <li><strong>AC-03.3</strong> In K–12 modes, when a school administrator marks an absence as excused/medical, then the excused and unexcused day counters of the student are incremented separately and both remain visible.</li>
         <li><strong>AC-03.4</strong> When a student's excused/unexcused or total absence days exceed the threshold configured for the institution type (for example 10 unexcused or 30 total days in High School), then the student is automatically flagged as <em>Failed due to Absence</em> regardless of the grade average.</li>
-        <li><strong>AC-03.5</strong> Given an institution type, when the Manager defines exam types and their percentage weights, then the configured set is offered in the grade-entry screen of the assigned teachers and is persisted per course/section.</li>
+        <li><strong>AC-03.5</strong> Given a course assigned to a Teacher, when that Teacher defines the exam types and their percentage weights, then the configuration is persisted per course/section and is the set used for grade entry and for the weighted average; a Teacher cannot configure a course that is not assigned to them (<code>403</code>).</li>
         <li><strong>AC-03.6</strong> When a score outside the <code>0</code>–<code>100</code> range (including non-numeric input) is submitted, then the API returns <code>400 Bad Request</code> and the previously stored score is left unchanged.</li>
         <li><strong>AC-03.7</strong> When a valid score is accepted, then it is stored against the correct student, exam type, and section, and the weighted average of that student is recalculated immediately.</li>
       </ul>
