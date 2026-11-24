@@ -3,6 +3,13 @@ info:
   title: Education Management System API
   version: 0.1.0
   description: Fundamental API contract for class capacities, teacher assignments, grade management, and automated pass/fail report card generation.
+  license:
+    name: MIT License
+    identifier: MIT
+
+servers:
+  - url: /
+    description: Relative to the deployed host. Locally the stack is served from http://localhost:3000.
 
 # All endpoints require a JWT Bearer token unless they override this (e.g. /auth/login).
 security:
@@ -45,6 +52,8 @@ paths:
   /classes:
     get:
       operationId: listClasses
+      summary: List classes and their capacity (US-02)
+      description: Returns the classes/sections visible to the authenticated user, with their configured and remaining capacity.
       responses:
         '200':
           description: Available classes and capacity information
@@ -54,10 +63,16 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/ClassRoom'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
                   
   /students/{studentId}/grades:
     post:
       operationId: addGrade
+      summary: Add an exam grade for a student (US-03)
+      description: Records one exam score (0–100) with its weight for a student; only the teacher assigned to the student's class may add grades.
       parameters:
         - in: path
           name: studentId
@@ -75,12 +90,16 @@ paths:
           description: Grade successfully added
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          description: Unauthorized teacher for this class
+          $ref: '#/components/responses/Forbidden'
           
   /students/{studentId}/report-card:
     get:
       operationId: getReportCard
+      summary: Get a student's weighted report card (US-04)
+      description: Returns the weighted average and pass/fail result computed from the configured exam weights.
       parameters:
         - in: path
           name: studentId
@@ -94,8 +113,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReportCard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           description: Student not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
 
 components:
   securitySchemes:
@@ -168,6 +195,20 @@ components:
   responses:
     BadRequest:
       description: Invalid request (e.g., Grade out of range)
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Unauthorized:
+      description: Missing, expired or invalid bearer token
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+
+    Forbidden:
+      description: Authenticated user is not allowed to access this resource
       content:
         application/problem+json:
           schema:
