@@ -6,7 +6,6 @@ info:
   license:
     name: MIT License
     identifier: MIT
-    url: https://github.com/K1llly/SENG-321-PROJECT/blob/main/LICENSE
 
 servers:
   - url: /
@@ -91,8 +90,10 @@ paths:
           description: Grade successfully added
         '400':
           $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
         '403':
-          description: Unauthorized teacher for this class
+          $ref: '#/components/responses/Forbidden'
           
   /students/{studentId}/report-card:
     get:
@@ -112,8 +113,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReportCard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           description: Student not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
 
 components:
   securitySchemes:
